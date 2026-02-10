@@ -13,7 +13,51 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class DriveConstants {
+    // Motor controller IDs for drivetrain motors
+    public static final int LEFT_LEADER_ID = 10;
+    public static final int LEFT_FOLLOWER_ID = 11;
+    public static final int RIGHT_LEADER_ID = 12;
+    public static final int RIGHT_FOLLOWER_ID = 13;
+
+    // Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
+    // likelihood of tripping breakers or damaging CIM motors
+    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
+
+    // For Localization - units in meteres
+    public static final double TRACK_WIDTH = 0.5334;
+    public static final double WHEEL_RADIUS = 0.0762;
+    public static final int ENCODER_RESOLUTION = 42;
+    public static final double GEAR_RATIO = 8.46;
+    public static final double DISTANCE_ADJUST = 0.66;
+
+    // For gyroscope
+    public static final double GYRO_OFFSET = 180.0;
+  }
+
+  public static final class FuelConstants {
+    // Motor controller IDs for fuel system motors
+    public static final int FUEL_INTAKE_ID = 23;
+    public static final int FUEL_FEEDER_ID = 20;
+    public static final int FUEL_SHOOTER_LEFT_ID = 21;
+    public static final int FUEL_SHOOTER_RIGHT_ID = 22;
+
+    // Current limit for fuel system motors. 40A is a reasonable maximum to reduce
+    // likelihood of tripping breakers or damaging motors
+    public static final int CURRENT_LIMIT = 40;
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+        // Port constants for driver and operator controllers. These should match the
+    // values in the Joystick tab of the Driver Station software
+    public static final int DRIVER_CONTROLLER_PORT = 0;
+    public static final int OPERATOR_CONTROLLER_PORT = 1;
+
+    // This value is multiplied by the joystick value when driving the robot to
+    // help avoid driving and turning too fast and being difficult to control
+    public static final double DRIVE_SCALING = .7;
+    public static final double ROTATION_SCALING = .4;
   }
 }

@@ -6,6 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.FuelSubSystem;
+
+import org.opencv.features2d.Features2d;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,10 +24,17 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // This is a Test Commit and Push
 
+  // SubSystems
+  private final FuelSubSystem fuelSubSystem = new FuelSubSystem();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+      private final CommandXboxController operatorController =
+      new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
+      
+      
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -44,6 +55,10 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+
+    // Test Launcher Command with Operator Joystic A
+    operatorController.a()
+      .whileTrue(fuelSubSystem.runEnd(() -> fuelSubSystem.setLaunchPower(0.3), () -> fuelSubSystem.stopLauncher()));
     
   }
 
