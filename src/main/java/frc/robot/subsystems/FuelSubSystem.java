@@ -51,9 +51,9 @@ public class FuelSubSystem extends SubsystemBase {
       SparkMaxConfig launcherConfig = new SparkMaxConfig();
       launcherConfig.smartCurrentLimit(Constants.FuelConstants.CURRENT_LIMIT);
       launcherConfig.idleMode(IdleMode.kCoast);
-      launcherConfig.follow(launcherLeft, true);
+      //launcherConfig.follow(launcherLeft, true);
       launcherRight.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-      launcherConfig.disableFollowerMode();
+      //launcherConfig.disableFollowerMode();
       launcherLeft.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       // Encoders
@@ -84,23 +84,33 @@ public class FuelSubSystem extends SubsystemBase {
 
   // Simple Turn on Left Launcher - will right follow?
   public void setLaunchPower(double power) {
-    launcherLeft.set(power);
+    launcherLeft.set(-power);
+    launcherRight.set(power);
   }
 
   // Stop Launcher
   public void stopLauncher() {
     launcherLeft.set(0);
+    launcherRight.set(0);
+  }
+
+  public void setFeederPower(double power) {
+    feederRoller.set(power);
   }
 
   // Command Factories
 
   // Test Commands to turn on and off the Launch Motors
   public Command launchSpeedCommand(FuelSubSystem fuelSubSystem, double speed) {
-    return Commands.run(() -> setLaunchPower(speed));
+    return Commands.runEnd(() -> setLaunchPower(speed), () -> setLaunchPower(0), fuelSubSystem);
   }
 
   public Command stopLauncherCommand(FuelSubSystem fuelSubSystem) {
     return Commands.run(() -> stopLauncher());
+  }
+
+  public Command setFeederCommand(FuelSubSystem fuelSubSystem, double speed) {
+    return Commands.runEnd(() -> setFeederPower(speed), () -> setFeederPower(0));
   }
 
 }

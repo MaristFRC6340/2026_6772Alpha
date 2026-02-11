@@ -29,7 +29,7 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
 
       private final CommandXboxController operatorController =
       new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
@@ -58,8 +58,14 @@ public class RobotContainer {
 
     // Test Launcher Command with Operator Joystic A
     operatorController.a()
-      .whileTrue(fuelSubSystem.runEnd(() -> fuelSubSystem.setLaunchPower(0.3), () -> fuelSubSystem.stopLauncher()));
+      .whileTrue(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0.7));
+
+    operatorController.rightBumper()
+      .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.4));
+
+    //fuelSubSystem.setDefaultCommand(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0));
     
+
   }
 
   /**
