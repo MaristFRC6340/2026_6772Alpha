@@ -6,13 +6,21 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.FuelSubSystem;
 
 import org.opencv.features2d.Features2d;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,25 +28,34 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
+
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // This is a Test Commit and Push
 
   // SubSystems
+  private final DriveTrainSubsystem driveTrainSubsystem= new DriveTrainSubsystem();
   private final FuelSubSystem fuelSubSystem = new FuelSubSystem();
+
+  // Chooser
+  //private final SendableChooser<Command> autoChooser;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
+      new CommandXboxController(Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
 
       private final CommandXboxController operatorController =
-      new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
+      new CommandXboxController(Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
       
       
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    // Setup Autonomous Chooser
+    //autoChooser = AutoBuilder.buildAutoChooser();
+    //SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -65,16 +82,19 @@ public class RobotContainer {
 
     //fuelSubSystem.setDefaultCommand(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0));
     
-
+    // DriveTrain Bindings
+    driveTrainSubsystem.setDefaultCommand(
+      driveTrainSubsystem.driveArcade(
+        () -> m_driverController.getLeftY() * Constants.OperatorConstants.DRIVE_SCALING,
+        () -> m_driverController.getRightX() * Constants.OperatorConstants.ROTATION_SCALING)
+    );
+        
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+  // Autonomous Command
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
+    //return new PathPlannerAuto("Example Auto");
     return null;
   }
 }
