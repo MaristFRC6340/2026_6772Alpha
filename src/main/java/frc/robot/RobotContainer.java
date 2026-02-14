@@ -38,7 +38,7 @@ public class RobotContainer {
   private final FuelSubSystem fuelSubSystem = new FuelSubSystem();
 
   // Chooser
-  //private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -54,8 +54,8 @@ public class RobotContainer {
     configureBindings();
 
     // Setup Autonomous Chooser
-    //autoChooser = AutoBuilder.buildAutoChooser();
-    //SmartDashboard.putData("Auto Chooser", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -80,6 +80,9 @@ public class RobotContainer {
     operatorController.rightBumper()
       .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.4));
 
+    operatorController.b()
+      .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, 0.3));
+
     //fuelSubSystem.setDefaultCommand(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0));
     
     // DriveTrain Bindings
@@ -94,7 +97,7 @@ public class RobotContainer {
   // Autonomous Command
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return new PathPlannerAuto("Example Auto");
-    return null;
+    return new PathPlannerAuto("BackUpShoot");
+    //return null;
   }
 }

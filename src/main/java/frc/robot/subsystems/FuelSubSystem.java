@@ -98,6 +98,15 @@ public class FuelSubSystem extends SubsystemBase {
     feederRoller.set(power);
   }
 
+  public void setIntakePower(double power) {
+    intakeMotor.set(power);
+  }
+
+  public void setIntakeFeederPower(double power) {
+    intakeMotor.set(power);
+    feederRoller.set(power);
+  }
+
   // Command Factories
 
   // Test Commands to turn on and off the Launch Motors
@@ -111,6 +120,10 @@ public class FuelSubSystem extends SubsystemBase {
 
   public Command setFeederCommand(FuelSubSystem fuelSubSystem, double speed) {
     return Commands.runEnd(() -> setFeederPower(speed), () -> setFeederPower(0));
+  }
+
+  public Command setIntakeCommand(FuelSubSystem fuelSubSystem, double speed) {
+    return Commands.runEnd(() -> setIntakeFeederPower(speed), () -> setIntakePower(0));
   }
 
 }
