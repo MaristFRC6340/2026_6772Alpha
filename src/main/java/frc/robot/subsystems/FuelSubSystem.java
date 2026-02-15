@@ -9,7 +9,11 @@ import java.util.Locale.IsoCountryCode;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -28,6 +32,10 @@ public class FuelSubSystem extends SubsystemBase {
   private SparkMax launcherRight;
   private SparkMax intakeMotor;
 
+  // Closed Loop Controllers for Launcher
+  private SparkClosedLoopController leftLaunchClosedLoopController;
+  private SparkClosedLoopController rightLaunchClosedLoopController;
+
   private final RelativeEncoder m_leftLaunchEncoder;
   private final RelativeEncoder m_rightLaunchEncoder;
 
@@ -39,6 +47,10 @@ public class FuelSubSystem extends SubsystemBase {
       launcherLeft = new SparkMax(Constants.FuelConstants.FUEL_SHOOTER_LEFT_ID, MotorType.kBrushless);
       launcherRight = new SparkMax(Constants.FuelConstants.FUEL_SHOOTER_RIGHT_ID, MotorType.kBrushless);
       intakeMotor = new SparkMax(Constants.FuelConstants.FUEL_INTAKE_ID, MotorType.kBrushless);
+
+      // Initialize Closed Loop Controllers
+      leftLaunchClosedLoopController = launcherLeft.getClosedLoopController();
+      rightLaunchClosedLoopController = launcherRight.getClosedLoopController();      
      
       // Setup Configuation for Intake and Feeder Motors
       SparkMaxConfig feederConfig = new SparkMaxConfig();
@@ -47,23 +59,40 @@ public class FuelSubSystem extends SubsystemBase {
       feederRoller.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       intakeMotor.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-      // Setup Configuration for Launcher Motors
+      // Setup Configuration for Launcher Motors and PID
       SparkMaxConfig launcherConfig = new SparkMaxConfig();
       launcherConfig.smartCurrentLimit(Constants.FuelConstants.CURRENT_LIMIT);
       launcherConfig.idleMode(IdleMode.kCoast);
       //launcherConfig.follow(launcherLeft, true);
+
+      // PID Configuration
+      // Conversion Factors - built in so using 1
+      launcherConfig.encoder
+        .positionConversionFactor(1)
+        .velocityConversionFactor(1);
+
+      // Configure Closed Loop Control with P,I,D,Feed Forward values
+      // Defaults to Slot 0 where we are using velocity control
+      launcherConfig.closedLoop
+        .p(0.0001)
+        .i(0)
+        .d(0)
+        .outputRange(0, 0.95)
+        .feedForward.kV( 12.0 / 5767); // 12 Volts divided by Maximum RPM of NEO
+
       launcherRight.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       //launcherConfig.disableFollowerMode();
+
+      // Invert Left
+      launcherConfig.inverted(true);
       launcherLeft.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-      // Encoders
+      // Encoders for Launching Motors
       m_leftLaunchEncoder = launcherLeft.getEncoder();
       m_rightLaunchEncoder = launcherRight.getEncoder();
 
       m_leftLaunchEncoder.setPosition(0);
       m_rightLaunchEncoder.setPosition(0);
-
-      // Add PID Control Later
 
       // Smart Dashboard
       SmartDashboard.putNumber("Left Launcher RPM", 0);
@@ -84,8 +113,13 @@ public class FuelSubSystem extends SubsystemBase {
 
   // Simple Turn on Left Launcher - will right follow?
   public void setLaunchPower(double power) {
-    launcherLeft.set(-power);
+    launcherLeft.set(power); 
     launcherRight.set(power);
+  }
+
+  public void setLaunchVelocity(double velocity) {
+    leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
 
   // Stop Launcher
@@ -107,6 +141,11 @@ public class FuelSubSystem extends SubsystemBase {
     feederRoller.set(power);
   }
 
+  public void setFeederLaunchPower(double power) {
+    intakeMotor.set(-power);
+    feederRoller.set(power);
+  }
+
   // Command Factories
 
   // Test Commands to turn on and off the Launch Motors
@@ -114,12 +153,16 @@ public class FuelSubSystem extends SubsystemBase {
     return Commands.runEnd(() -> setLaunchPower(speed), () -> setLaunchPower(0), fuelSubSystem);
   }
 
+  public Command launchVelocityCommand(FuelSubSystem fuelSubSystem, double velocity) {
+    return Commands.runEnd(() -> setLaunchVelocity(velocity), () -> setLaunchPower(0));
+  }
+
   public Command stopLauncherCommand(FuelSubSystem fuelSubSystem) {
     return Commands.run(() -> stopLauncher());
   }
 
   public Command setFeederCommand(FuelSubSystem fuelSubSystem, double speed) {
-    return Commands.runEnd(() -> setFeederPower(speed), () -> setFeederPower(0));
+    return Commands.runEnd(() -> setFeederLaunchPower(speed), () -> setFeederLaunchPower(0));
   }
 
   public Command setIntakeCommand(FuelSubSystem fuelSubSystem, double speed) {

@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.FuelSubSystem;
 
@@ -36,6 +37,7 @@ public class RobotContainer {
   // SubSystems
   private final DriveTrainSubsystem driveTrainSubsystem= new DriveTrainSubsystem();
   private final FuelSubSystem fuelSubSystem = new FuelSubSystem();
+  private final ClimberSubSystem climberSubSystem = new ClimberSubSystem();
 
   // Chooser
   private final SendableChooser<Command> autoChooser;
@@ -75,13 +77,23 @@ public class RobotContainer {
 
     // Test Launcher Command with Operator Joystic A
     operatorController.a()
-      .whileTrue(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0.7));
+      .whileTrue(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0.8));
+
+    operatorController.x()
+      .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, 550)); // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
 
     operatorController.rightBumper()
-      .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.4));
+      .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
 
     operatorController.b()
-      .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, 0.3));
+      .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, 0.8));
+
+    // Climber Controls
+    m_driverController.leftBumper()
+      .whileTrue(climberSubSystem.setClimberCommand(climberSubSystem, 0.8));
+
+    m_driverController.rightBumper()
+      .whileTrue(climberSubSystem.setClimberCommand(climberSubSystem, -0.8));
 
     //fuelSubSystem.setDefaultCommand(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0));
     

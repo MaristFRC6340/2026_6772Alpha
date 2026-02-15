@@ -43,6 +43,8 @@ public final class Constants {
     public static final int FUEL_SHOOTER_LEFT_ID = 21;
     public static final int FUEL_SHOOTER_RIGHT_ID = 22;
 
+    public static final int CLIMBER_ID = 30;
+
     // Current limit for fuel system motors. 40A is a reasonable maximum to reduce
     // likelihood of tripping breakers or damaging motors
     public static final int CURRENT_LIMIT = 40;
