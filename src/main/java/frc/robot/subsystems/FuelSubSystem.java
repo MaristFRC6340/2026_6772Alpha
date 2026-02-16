@@ -61,7 +61,7 @@ public class FuelSubSystem extends SubsystemBase {
 
       // Setup Configuration for Launcher Motors and PID
       SparkMaxConfig launcherConfig = new SparkMaxConfig();
-      launcherConfig.smartCurrentLimit(Constants.FuelConstants.CURRENT_LIMIT);
+      launcherConfig.smartCurrentLimit(Constants.FuelConstants.LAUNCHER_CURRENT_LIMIT);
       launcherConfig.idleMode(IdleMode.kCoast);
       //launcherConfig.follow(launcherLeft, true);
 
@@ -97,6 +97,8 @@ public class FuelSubSystem extends SubsystemBase {
       // Smart Dashboard
       SmartDashboard.putNumber("Left Launcher RPM", 0);
       SmartDashboard.putNumber("Right Launcher RPM:", 0);
+      SmartDashboard.putNumber("Left Launch Amps", 0);
+      SmartDashboard.putNumber("Right Launch Amps", 0);
       
   }
 
@@ -106,6 +108,12 @@ public class FuelSubSystem extends SubsystemBase {
     // Update the Velocities of the Launcher
     SmartDashboard.putNumber("Left Launcher RPM", m_leftLaunchEncoder.getVelocity());
     SmartDashboard.putNumber("Right Launcher RPM:", m_rightLaunchEncoder.getVelocity());
+
+    double leftAmps = launcherLeft.getOutputCurrent();
+    double rightAmps = launcherRight.getOutputCurrent();
+
+    SmartDashboard.putNumber("Left Launch Amps", leftAmps);
+    SmartDashboard.putNumber("Right Launch Amps", rightAmps);
 
   }
 
@@ -166,7 +174,7 @@ public class FuelSubSystem extends SubsystemBase {
   }
 
   public Command setIntakeCommand(FuelSubSystem fuelSubSystem, double speed) {
-    return Commands.runEnd(() -> setIntakeFeederPower(speed), () -> setIntakePower(0));
+    return Commands.runEnd(() -> setIntakeFeederPower(speed), () -> setIntakeFeederPower(0));
   }
 
 }

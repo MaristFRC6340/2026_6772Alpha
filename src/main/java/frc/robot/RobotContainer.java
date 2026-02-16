@@ -75,12 +75,36 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
+    // Real Controls - Operator
+    // Operator Intake form Ground LeftTrigger
+    
+    // Operator Left Bumber is Outtake
+    
+    // Operator Shooting is Right Trigger
+
+    // Operator y starts Launcher distance Distance
+
+    // Operator b is near shot
+
+    // Operator a stops Launcher
+
+    // Real Controls Driver
+    // Default Command Arcade Style Drive
+
+    // Climber controlled with Triggers
+
+    // Slow Mode press and release Driver left Bumper
+
+    // Fast Mode press and release Driver Right Bumper
+
+
     // Test Launcher Command with Operator Joystic A
     operatorController.a()
       .whileTrue(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0.8));
 
     operatorController.x()
-      .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, 550)); // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
+      .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, 625)); 
+      // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
 
     operatorController.rightBumper()
       .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
@@ -100,8 +124,8 @@ public class RobotContainer {
     // DriveTrain Bindings
     driveTrainSubsystem.setDefaultCommand(
       driveTrainSubsystem.driveArcade(
-        () -> m_driverController.getLeftY() * Constants.OperatorConstants.DRIVE_SCALING,
-        () -> m_driverController.getRightX() * Constants.OperatorConstants.ROTATION_SCALING)
+        () -> m_driverController.getLeftY(),
+        () -> m_driverController.getRightX())
     );
         
   }

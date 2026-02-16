@@ -48,6 +48,8 @@ public final class Constants {
     // Current limit for fuel system motors. 40A is a reasonable maximum to reduce
     // likelihood of tripping breakers or damaging motors
     public static final int CURRENT_LIMIT = 40;
+
+    public static final int LAUNCHER_CURRENT_LIMIT = 60;
   }
 
   public static class OperatorConstants {

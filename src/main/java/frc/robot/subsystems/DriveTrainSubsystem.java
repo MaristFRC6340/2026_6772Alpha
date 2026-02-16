@@ -63,6 +63,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   private final DifferentialDrive drive;
 
+  private double SLOW_DRIVE = 0.5;
+  private double SLOW_TURN = 0.2;
+  private double FAST_DRIVE = 0.8;
+  private double FAST_TURN = 0.5;
+
+  private double driveSpeed = SLOW_DRIVE;
+  private double turnSpeed = SLOW_TURN;
+
   // Using Old Gyroscope for Testing Angles
   // Creating and Binding to Port
   ADXRS450_Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
@@ -252,6 +260,16 @@ public DriveTrainSubsystem() {
     drive.arcadeDrive(0, turnPower);
   }
 
+  public void setFastMode() {
+    driveSpeed = FAST_DRIVE;
+    turnSpeed = FAST_TURN;
+  }
+
+  public void setSlowMode() {
+    driveSpeed = SLOW_DRIVE;
+    turnSpeed = SLOW_TURN;
+  }
+
    public void driveSlow(double x, double z) {
 
     
@@ -279,7 +297,16 @@ public DriveTrainSubsystem() {
 
    public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
     return this.run(
-        () -> drive.arcadeDrive(xSpeed.getAsDouble(), zRotation.getAsDouble()));
+        () -> drive.arcadeDrive(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+  }
+
+  // We will use these later . . .
+  public Command setFastDriveCommand() {
+    return this.runOnce(() -> this.setFastMode());
+  }
+
+  public Command setSlowDriveCommand() {
+    return this.runOnce(() -> this.setSlowMode());
   }
 
   public Command aimCommand() {    
