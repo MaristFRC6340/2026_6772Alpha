@@ -10,11 +10,16 @@ import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.FuelSubSystem;
 
+import static frc.robot.Constants.FuelConstants.FEEDER_LAUNCH_POWER;
+import static frc.robot.Constants.FuelConstants.MID_DISTANCE_VELOCITY;
+
 import org.opencv.features2d.Features2d;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,10 +59,17 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    
+    
+    NamedCommands.registerCommand("Shoot1", fuelSubSystem.autoStartLauncherLeft(MID_DISTANCE_VELOCITY).withTimeout(1).andThen(fuelSubSystem.feederSpeedCommand(fuelSubSystem, FEEDER_LAUNCH_POWER).withTimeout(15)).andThen(() -> fuelSubSystem.stopLauncher()));
+    NamedCommands.registerCommand("Shoot2", fuelSubSystem.autoStartLauncherRight(MID_DISTANCE_VELOCITY).withTimeout(1).andThen(fuelSubSystem.feederSpeedCommand(fuelSubSystem, FEEDER_LAUNCH_POWER).withTimeout(15)).andThen(() -> fuelSubSystem.stopLauncher()));
 
-    // Setup Autonomous Chooser
+    NamedCommands.registerCommand("Intake", fuelSubSystem.intakeSpeedCommand(fuelSubSystem, () -> 0.8, () -> 0.0).withTimeout(5));
+
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+
   }
 
   /**
@@ -103,7 +115,7 @@ public class RobotContainer {
       .whileTrue(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0.8));
 
     operatorController.x()
-      .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, 625)); 
+      .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY)); 
       // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
 
     operatorController.rightBumper()

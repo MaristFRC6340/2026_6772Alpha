@@ -5,12 +5,14 @@
 package frc.robot.subsystems;
 
 import java.util.Locale.IsoCountryCode;
+import java.util.function.DoubleSupplier;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -18,11 +20,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import static frc.robot.Constants.FuelConstants.*;
 
 public class FuelSubSystem extends SubsystemBase {
 
@@ -135,6 +140,23 @@ public class FuelSubSystem extends SubsystemBase {
     launcherLeft.set(0);
     launcherRight.set(0);
   }
+  public Command autoStartLauncher() {
+
+      return Commands.run(() -> feederRoller.setVoltage(MID_DISTANCE_VELOCITY), 
+                           this);
+  }
+  public Command autoIntake() {
+
+      return Commands.run(() -> 
+      
+      new ParallelCommandGroup(
+      autoStartLauncher(),
+      feederSpeedCommand(this, 0.8)              
+      )
+      
+      );
+  }
+
 
   public void setFeederPower(double power) {
     feederRoller.set(power);
@@ -154,11 +176,21 @@ public class FuelSubSystem extends SubsystemBase {
     feederRoller.set(power);
   }
 
+  
+   public void setFeederSpeed(double power) {
+    feederRoller.set(power);
+  }
+
+
   // Command Factories
 
   // Test Commands to turn on and off the Launch Motors
   public Command launchSpeedCommand(FuelSubSystem fuelSubSystem, double speed) {
     return Commands.runEnd(() -> setLaunchPower(speed), () -> setLaunchPower(0), fuelSubSystem);
+  }
+
+  public Command feederSpeedCommand(FuelSubSystem fuelSubsystem, double speed) {
+    return Commands.run(() -> setFeederSpeed(speed));
   }
 
   public Command launchVelocityCommand(FuelSubSystem fuelSubSystem, double velocity) {
@@ -168,7 +200,20 @@ public class FuelSubSystem extends SubsystemBase {
   public Command stopLauncherCommand(FuelSubSystem fuelSubSystem) {
     return Commands.run(() -> stopLauncher());
   }
+  public Command autoStartLauncherLeft(double velocity) {
 
+      return Commands.runEnd(() -> setLaunchVelocity(velocity), () -> setLaunchPower(0));
+      
+  }
+  public Command autoStartLauncherRight(double velocity) {
+
+      return Commands.runEnd(() -> setLaunchVelocity(velocity), () -> setLaunchPower(0)); //this could be wrong hopefully not yay
+      
+  }
+
+  public Command intakeSpeedCommand(FuelSubSystem fuelSubsystem, DoubleSupplier forward, DoubleSupplier reverse) {
+    return Commands.run(() -> intake(forward.getAsDouble() - reverse.getAsDouble()), fuelSubsystem);
+  }
   public Command setFeederCommand(FuelSubSystem fuelSubSystem, double speed) {
     return Commands.runEnd(() -> setFeederLaunchPower(speed), () -> setFeederLaunchPower(0));
   }

@@ -50,6 +50,12 @@ public final class Constants {
     public static final int CURRENT_LIMIT = 40;
 
     public static final int LAUNCHER_CURRENT_LIMIT = 60;
+    public static final double LAUNCHING_LAUNCHER_VOLTAGE = 10; //from kitbotA might need to change
+
+    public static final double FEEDER_LAUNCH_POWER = 0.8;
+    public static final double FEEDER_STIR_POWER = -0.8;
+
+    public static final double MID_DISTANCE_VELOCITY = 625;
   }
 
   public static class OperatorConstants {
