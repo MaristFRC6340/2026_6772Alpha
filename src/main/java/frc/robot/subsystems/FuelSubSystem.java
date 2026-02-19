@@ -212,7 +212,7 @@ public class FuelSubSystem extends SubsystemBase {
   }
 
   public Command intakeSpeedCommand(FuelSubSystem fuelSubsystem, DoubleSupplier forward, DoubleSupplier reverse) {
-    return Commands.run(() -> intake(forward.getAsDouble() - reverse.getAsDouble()), fuelSubsystem);
+    return Commands.run(() -> setIntakeFeederPower(forward.getAsDouble() - reverse.getAsDouble()), fuelSubsystem);
   }
   public Command setFeederCommand(FuelSubSystem fuelSubSystem, double speed) {
     return Commands.runEnd(() -> setFeederLaunchPower(speed), () -> setFeederLaunchPower(0));
