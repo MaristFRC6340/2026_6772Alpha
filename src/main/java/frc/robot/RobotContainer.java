@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.FuelSubSystem;
@@ -71,6 +70,11 @@ public class RobotContainer {
 
 
   }
+
+
+public void setDesiredAngle() {
+  driveTrainSubsystem.setDesiredAngle();
+}
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -139,6 +143,12 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(),
         () -> m_driverController.getRightX())
     );
+
+    //driveTrainSubsystem.setDefaultCommand(
+    //  driveTrainSubsystem.driveTank(
+    //    () -> m_driverController.getLeftY(),
+    //    () -> m_driverController.getRightY())
+    //);
         
   }
 

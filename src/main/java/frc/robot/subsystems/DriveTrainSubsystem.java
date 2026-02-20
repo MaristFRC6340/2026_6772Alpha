@@ -68,8 +68,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private double FAST_DRIVE = 0.8;
   private double FAST_TURN = 0.5;
 
-  private double driveSpeed = SLOW_DRIVE;
-  private double turnSpeed = SLOW_TURN;
+  private double driveSpeed = FAST_DRIVE;
+  private double turnSpeed = FAST_TURN;
 
   // Using Old Gyroscope for Testing Angles
   // Creating and Binding to Port
@@ -88,6 +88,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private double kP = 0.02;
   private double turnPower;
   private double gearMultiply = 1;
+
+  // For heading control
+  private double desiredAngle = 0;
+  private double kPA = 0.1;
+  private double driveTurnError = 0;
 
 public DriveTrainSubsystem() {
     // create brushed motors for drive
@@ -151,6 +156,8 @@ public DriveTrainSubsystem() {
       SmartDashboard.putNumber("Right Distance", 0);
       SmartDashboard.putNumber("Forward Input", 0);
       SmartDashboard.putNumber("Turn Input", 0);
+      SmartDashboard.putNumber("Turn Power Adjust", 0);
+      SmartDashboard.putNumber("Desired Angle", 0);
 
       // binding limelight
       limTable = NetworkTableInstance.getDefault().getTable("limelight");
@@ -190,6 +197,8 @@ public DriveTrainSubsystem() {
       this
     );
     
+    // Line Up Desired Angle
+    desiredAngle = -1 * (m_gyro.getAngle() + GYRO_OFFSET);
      
 }
 
@@ -227,6 +236,12 @@ public DriveTrainSubsystem() {
     // Publish for AdvantageScope
     field.setRobotPose(m_PoseEstimator.getEstimatedPosition());
     SmartDashboard.putData("Field", field);
+  }
+
+  // Set Desired Angle
+  public void setDesiredAngle() {
+    desiredAngle = -1 * (m_gyro.getAngle() + GYRO_OFFSET);
+    SmartDashboard.putNumber("Desired Angle", desiredAngle);
   }
 
     public Pose2d getPose() {
@@ -295,10 +310,53 @@ public DriveTrainSubsystem() {
       drive.arcadeDrive(-x, -z);
   }
 
-   public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
-    return this.run(
-        () -> drive.arcadeDrive(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+  // Uses Gyroscope to keep robot straight
+  // This is now the default Teleoperation Mode
+  public void arcadeDriveV2(double xSpeed, double zRotation) {
+    // Regular Drive
+    if (Math.abs(zRotation) > 0.1) {
+        drive.arcadeDrive(xSpeed, zRotation);
+        desiredAngle = -1 * (m_gyro.getAngle() + GYRO_OFFSET);
+        SmartDashboard.putNumber("Desired Angle", desiredAngle);
+    }
+    // PID Heading Control Mode when not turning
+    else {
+      driveTurnError = (-1 * (m_gyro.getAngle() + GYRO_OFFSET)) - desiredAngle;
+      double adjustPower = driveTurnError * kPA;
+      if (adjustPower > 0.2) {
+        adjustPower = 0.2;
+      }
+      if (adjustPower < -0.2) {
+        adjustPower = -0.2;
+      }
+      SmartDashboard.putNumber("Turn Power Adjust", adjustPower);
+      drive.arcadeDrive(xSpeed, adjustPower);
+    }
+    
+
   }
+
+
+
+    
+  public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
+    return this.run(
+        //() -> drive.arcadeDrive(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+        () -> arcadeDriveV2(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+  }
+
+  public Command driveTank(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
+    return this.run(
+        () -> drive.tankDrive(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+  }
+  
+  
+  /* 
+  public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
+    return this.run(
+        () -> driveSubCommand(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+  }
+        */
 
   // We will use these later . . .
   public Command setFastDriveCommand() {
