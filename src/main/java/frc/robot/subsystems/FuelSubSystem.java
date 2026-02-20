@@ -137,7 +137,7 @@ public class FuelSubSystem extends SubsystemBase {
 
   // Stop Launcher
   public void stopLauncher() {
-    launcherLeft.set(0);
+    launcherLeft.set(0); 
     launcherRight.set(0);
   }
   public Command autoStartLauncher() {
@@ -185,6 +185,7 @@ public class FuelSubSystem extends SubsystemBase {
   // Command Factories
 
   // Test Commands to turn on and off the Launch Motors
+  // launchSpeeedCommand net used
   public Command launchSpeedCommand(FuelSubSystem fuelSubSystem, double speed) {
     return Commands.runEnd(() -> setLaunchPower(speed), () -> setLaunchPower(0), fuelSubSystem);
   }
@@ -193,8 +194,9 @@ public class FuelSubSystem extends SubsystemBase {
     return Commands.run(() -> setFeederSpeed(speed));
   }
 
+  // Use this oune
   public Command launchVelocityCommand(FuelSubSystem fuelSubSystem, double velocity) {
-    return Commands.runEnd(() -> setLaunchVelocity(velocity), () -> setLaunchPower(0));
+    return Commands.run(() -> setLaunchVelocity(velocity));
   }
 
   public Command stopLauncherCommand(FuelSubSystem fuelSubSystem) {

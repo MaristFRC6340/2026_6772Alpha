@@ -112,7 +112,7 @@ public class RobotContainer {
 
     // Test Launcher Command with Operator Joystic A
     operatorController.a()
-      .whileTrue(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0.8));
+      .whileTrue(fuelSubSystem.stopLauncherCommand(fuelSubSystem));
 
     operatorController.x()
       .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY)); 
