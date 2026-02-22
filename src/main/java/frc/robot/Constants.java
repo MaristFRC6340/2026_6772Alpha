@@ -68,5 +68,11 @@ public final class Constants {
     // help avoid driving and turning too fast and being difficult to control
     public static final double DRIVE_SCALING = .7;
     public static final double ROTATION_SCALING = .4;
+
+    // Slow and Fast Mode Constants
+    public static final double SLOW_DRIVE = 0.5;
+    public static final double SLOW_TURN = 0.3;
+    public static final double FAST_DRIVE = 0.8;
+    public static final double FAST_TURN = 0.5;
   }
 }

@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -59,11 +60,16 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     
-    
-    NamedCommands.registerCommand("Shoot1", fuelSubSystem.autoStartLauncherLeft(MID_DISTANCE_VELOCITY).withTimeout(1).andThen(fuelSubSystem.feederSpeedCommand(fuelSubSystem, FEEDER_LAUNCH_POWER).withTimeout(15)).andThen(() -> fuelSubSystem.stopLauncher()));
-    NamedCommands.registerCommand("Shoot2", fuelSubSystem.autoStartLauncherRight(MID_DISTANCE_VELOCITY).withTimeout(1).andThen(fuelSubSystem.feederSpeedCommand(fuelSubSystem, FEEDER_LAUNCH_POWER).withTimeout(15)).andThen(() -> fuelSubSystem.stopLauncher()));
+    NamedCommands.registerCommand("Center Start", driveTrainSubsystem.setCenterPose());
+    NamedCommands.registerCommand("Left Start", driveTrainSubsystem.setLeftPose());
+    NamedCommands.registerCommand("Right Start", driveTrainSubsystem.setRightPose());
 
+    NamedCommands.registerCommand("Start Launcher", fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY));
+    NamedCommands.registerCommand("Feeder Start", fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
+    NamedCommands.registerCommand("Stop Feeder", fuelSubSystem.setFeederCommand(fuelSubSystem, 0));
+    NamedCommands.registerCommand("Auto Aim", driveTrainSubsystem.aimCommand());
     NamedCommands.registerCommand("Intake", fuelSubSystem.intakeSpeedCommand(fuelSubSystem, () -> 0.8, () -> 0.0).withTimeout(5));
+    NamedCommands.registerCommand("Stop Launcher", fuelSubSystem.stopLauncherCommand(fuelSubSystem));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -109,53 +115,59 @@ public void setDesiredAngle() {
 
     // Climber controlled with Triggers
 
-    // Slow Mode press and release Driver left Bumper
-
-    // Fast Mode press and release Driver Right Bumper
+    
 
 
-    // Test Launcher Command with Operator Joystic A
+    // Stop Launcher Motors
     operatorController.a()
       .whileTrue(fuelSubSystem.stopLauncherCommand(fuelSubSystem));
 
+    // Start Launcher Motors
     operatorController.x()
       .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY)); 
       // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
 
+    // Shoots Fuel
     operatorController.rightBumper()
       .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
 
+    // Intakes Fuel  
     operatorController.b()
       .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, 0.8));
 
     // Climber Controls
-    m_driverController.leftBumper()
+    m_driverController.leftTrigger(0.5)
       .whileTrue(climberSubSystem.setClimberCommand(climberSubSystem, 0.8));
 
-    m_driverController.rightBumper()
+    m_driverController.rightTrigger(0.5)
       .whileTrue(climberSubSystem.setClimberCommand(climberSubSystem, -0.8));
 
     //fuelSubSystem.setDefaultCommand(fuelSubSystem.launchSpeedCommand(fuelSubSystem, 0));
     
+  // Aiming Mode with Limelight
+    m_driverController.leftBumper()
+      .whileTrue(driveTrainSubsystem.aimCommand());
+
+    // Fast Mode press and hold Driver Right Bumper
+    m_driverController.rightBumper()
+      .whileTrue(driveTrainSubsystem.driveArcade(
+        () -> m_driverController.getLeftY() * OperatorConstants.FAST_DRIVE,
+        () -> m_driverController.getRightX() * OperatorConstants.FAST_TURN));
+
     // DriveTrain Bindings
     driveTrainSubsystem.setDefaultCommand(
       driveTrainSubsystem.driveArcade(
-        () -> m_driverController.getLeftY(),
-        () -> m_driverController.getRightX())
+        () -> m_driverController.getLeftY() * OperatorConstants.SLOW_DRIVE,
+        () -> m_driverController.getRightX() * OperatorConstants.SLOW_TURN)
     );
-
-    //driveTrainSubsystem.setDefaultCommand(
-    //  driveTrainSubsystem.driveTank(
-    //    () -> m_driverController.getLeftY(),
-    //    () -> m_driverController.getRightY())
-    //);
         
   }
 
   // Autonomous Command
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new PathPlannerAuto("BackUpShoot");
+    //return new PathPlannerAuto("BackUpShoot");
+    return autoChooser.getSelected();
     //return null;
   }
 }

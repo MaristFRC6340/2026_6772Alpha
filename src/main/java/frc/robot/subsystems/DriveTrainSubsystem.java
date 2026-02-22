@@ -63,14 +63,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   private final DifferentialDrive drive;
 
-  private double SLOW_DRIVE = 0.5;
-  private double SLOW_TURN = 0.2;
-  private double FAST_DRIVE = 0.8;
-  private double FAST_TURN = 0.5;
-
-  private double driveSpeed = FAST_DRIVE;
-  private double turnSpeed = FAST_TURN;
-
   // Using Old Gyroscope for Testing Angles
   // Creating and Binding to Port
   ADXRS450_Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
@@ -85,7 +77,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private Field2d field = new Field2d();
 
   private double turnError;
-  private double kP = 0.02;
+  private double kP = 0.015;
   private double turnPower;
   private double gearMultiply = 1;
 
@@ -93,6 +85,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private double desiredAngle = 0;
   private double kPA = 0.1;
   private double driveTurnError = 0;
+
+  // Preset Poses for Autonomous
+  private Pose2d centerStart = new Pose2d(3.75, 4, new Rotation2d(180));
+  private Pose2d leftStart = new Pose2d(3.75, 5.31, new Rotation2d(180));
+  private Pose2d rightStart = new Pose2d(3.75, 2.89, new Rotation2d(180));
 
 public DriveTrainSubsystem() {
     // create brushed motors for drive
@@ -140,12 +137,16 @@ public DriveTrainSubsystem() {
     // Reset Gyroscope
     m_gyro.reset();
 
+    // Start Poses
+    // Center: 3.75, 4, 180
+    // Left: 3.75, 5.31
+
     m_PoseEstimator = new DifferentialDrivePoseEstimator(
       m_kinematics,
       m_gyro.getRotation2d(),
       -m_leftEncoder.getPosition()  * 2 * Math.PI * WHEEL_RADIUS / (GEAR_RATIO*gearMultiply),
       -m_rightEncoder.getPosition()  * 2 * Math.PI * WHEEL_RADIUS / (GEAR_RATIO*gearMultiply),
-      new Pose2d(3.75, 4, new Rotation2d(0)));
+      new Pose2d(3.75, 5.31, new Rotation2d(0)));
       
 
       SmartDashboard.putData("Field", field);
@@ -273,16 +274,8 @@ public DriveTrainSubsystem() {
     turnError = tx.getDouble(0);
     turnPower = kP * turnError;
     drive.arcadeDrive(0, turnPower);
-  }
-
-  public void setFastMode() {
-    driveSpeed = FAST_DRIVE;
-    turnSpeed = FAST_TURN;
-  }
-
-  public void setSlowMode() {
-    driveSpeed = SLOW_DRIVE;
-    turnSpeed = SLOW_TURN;
+    desiredAngle = -1 * (m_gyro.getAngle() + GYRO_OFFSET);
+    SmartDashboard.putNumber("Desired Angle", desiredAngle);
   }
 
    public void driveSlow(double x, double z) {
@@ -308,6 +301,7 @@ public DriveTrainSubsystem() {
         z = -0.4;
       }
       drive.arcadeDrive(-x, -z);
+      setDesiredAngle();
   }
 
   // Uses Gyroscope to keep robot straight
@@ -336,18 +330,26 @@ public DriveTrainSubsystem() {
 
   }
 
+  // For setting Auto Start Positions
+  public Command setCenterPose() {
+    return this.runOnce(() -> resetPose(centerStart));
+  }
+
+  public Command setLeftPose() {
+    return this.runOnce(() -> resetPose(leftStart));
+  }
+
+  public Command setRightPose() {
+    return this.runOnce(() -> resetPose(rightStart));
+  }
 
 
-    
+  // Modified to use arcadeDriveV2 - a PID direction controlled method 
+  // To keep Robot driving straight
   public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
     return this.run(
         //() -> drive.arcadeDrive(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
-        () -> arcadeDriveV2(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
-  }
-
-  public Command driveTank(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
-    return this.run(
-        () -> drive.tankDrive(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
+        () -> arcadeDriveV2(xSpeed.getAsDouble(), zRotation.getAsDouble()));
   }
   
   
@@ -357,15 +359,6 @@ public DriveTrainSubsystem() {
         () -> driveSubCommand(xSpeed.getAsDouble() * driveSpeed, zRotation.getAsDouble() * turnSpeed));
   }
         */
-
-  // We will use these later . . .
-  public Command setFastDriveCommand() {
-    return this.runOnce(() -> this.setFastMode());
-  }
-
-  public Command setSlowDriveCommand() {
-    return this.runOnce(() -> this.setSlowMode());
-  }
 
   public Command aimCommand() {    
     return this.run(
