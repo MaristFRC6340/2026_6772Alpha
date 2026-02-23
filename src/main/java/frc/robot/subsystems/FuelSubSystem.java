@@ -79,17 +79,18 @@ public class FuelSubSystem extends SubsystemBase {
       // Configure Closed Loop Control with P,I,D,Feed Forward values
       // Defaults to Slot 0 where we are using velocity control
       launcherConfig.closedLoop
-        .p(0.0001)
+        .p(0.00015)
         .i(0)
         .d(0)
         .outputRange(0, 0.95)
-        .feedForward.kV( 12.0 / 5767); // 12 Volts divided by Maximum RPM of NEO
+        .feedForward.kV( 12.0 / 5767); // 12 Volts divided by Maximum RPM of NEO (12.0 / 5767)
 
       launcherRight.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       //launcherConfig.disableFollowerMode();
 
       // Invert Left
       launcherConfig.inverted(true);
+      launcherConfig.follow(launcherRight); // Trying to have left follow the right
       launcherLeft.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       // Encoders for Launching Motors
@@ -131,7 +132,8 @@ public class FuelSubSystem extends SubsystemBase {
   }
 
   public void setLaunchVelocity(double velocity) {
-    leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    //Commented out to try a leader / follower format
+    //leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
 

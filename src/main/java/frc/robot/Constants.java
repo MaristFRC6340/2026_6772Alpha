@@ -55,7 +55,7 @@ public final class Constants {
     public static final double FEEDER_LAUNCH_POWER = 0.8;
     public static final double FEEDER_STIR_POWER = -0.8;
 
-    public static final double MID_DISTANCE_VELOCITY = 625;
+    public static final double MID_DISTANCE_VELOCITY = 800;
   }
 
   public static class OperatorConstants {
