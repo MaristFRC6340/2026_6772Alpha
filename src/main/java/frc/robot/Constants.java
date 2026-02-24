@@ -47,7 +47,7 @@ public final class Constants {
 
     // Current limit for fuel system motors. 40A is a reasonable maximum to reduce
     // likelihood of tripping breakers or damaging motors
-    public static final int CURRENT_LIMIT = 40;
+    public static final int CURRENT_LIMIT = 60;
 
     public static final int LAUNCHER_CURRENT_LIMIT = 60;
     public static final double LAUNCHING_LAUNCHER_VOLTAGE = 10; //from kitbotA might need to change
@@ -55,7 +55,9 @@ public final class Constants {
     public static final double FEEDER_LAUNCH_POWER = 0.8;
     public static final double FEEDER_STIR_POWER = -0.8;
 
-    public static final double MID_DISTANCE_VELOCITY = 800;
+    public static final double NEAR_DISTANCE_VELOCITY  = 600;
+    public static final double MID_DISTANCE_VELOCITY = 700;
+    public static final double FAR_DISTANCE_VELOCITY = 800;
   }
 
   public static class OperatorConstants {

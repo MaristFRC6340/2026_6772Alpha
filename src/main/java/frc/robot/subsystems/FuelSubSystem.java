@@ -14,6 +14,7 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -35,7 +36,7 @@ public class FuelSubSystem extends SubsystemBase {
   private SparkMax feederRoller;
   private SparkMax launcherLeft;
   private SparkMax launcherRight;
-  private SparkMax intakeMotor;
+  private SparkFlex intakeMotor;
 
   // Closed Loop Controllers for Launcher
   private SparkClosedLoopController leftLaunchClosedLoopController;
@@ -51,7 +52,7 @@ public class FuelSubSystem extends SubsystemBase {
       feederRoller = new SparkMax(Constants.FuelConstants.FUEL_FEEDER_ID, MotorType.kBrushless);
       launcherLeft = new SparkMax(Constants.FuelConstants.FUEL_SHOOTER_LEFT_ID, MotorType.kBrushless);
       launcherRight = new SparkMax(Constants.FuelConstants.FUEL_SHOOTER_RIGHT_ID, MotorType.kBrushless);
-      intakeMotor = new SparkMax(Constants.FuelConstants.FUEL_INTAKE_ID, MotorType.kBrushless);
+      intakeMotor = new SparkFlex(Constants.FuelConstants.FUEL_INTAKE_ID, MotorType.kBrushless);
 
       // Initialize Closed Loop Controllers
       leftLaunchClosedLoopController = launcherLeft.getClosedLoopController();
@@ -90,7 +91,7 @@ public class FuelSubSystem extends SubsystemBase {
 
       // Invert Left
       launcherConfig.inverted(true);
-      launcherConfig.follow(launcherRight); // Trying to have left follow the right
+      //launcherConfig.follow(launcherRight); // Trying to have left follow the right
       launcherLeft.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       // Encoders for Launching Motors
@@ -133,7 +134,7 @@ public class FuelSubSystem extends SubsystemBase {
 
   public void setLaunchVelocity(double velocity) {
     //Commented out to try a leader / follower format
-    //leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
 

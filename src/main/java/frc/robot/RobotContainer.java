@@ -9,8 +9,10 @@ import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.FuelSubSystem;
 
+import static frc.robot.Constants.FuelConstants.FAR_DISTANCE_VELOCITY;
 import static frc.robot.Constants.FuelConstants.FEEDER_LAUNCH_POWER;
 import static frc.robot.Constants.FuelConstants.MID_DISTANCE_VELOCITY;
+import static frc.robot.Constants.FuelConstants.NEAR_DISTANCE_VELOCITY;
 
 import org.opencv.features2d.Features2d;
 
@@ -65,11 +67,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("Right Start", driveTrainSubsystem.setRightPose());
 
     NamedCommands.registerCommand("Start Launcher", fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY));
+    NamedCommands.registerCommand("Start Launcher Far", fuelSubSystem.launchVelocityCommand(fuelSubSystem, FAR_DISTANCE_VELOCITY));
+    NamedCommands.registerCommand("Start Launcher Near", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY));
+    
     NamedCommands.registerCommand("Feeder Start", fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
     NamedCommands.registerCommand("Stop Feeder", fuelSubSystem.setFeederCommand(fuelSubSystem, 0));
     NamedCommands.registerCommand("Auto Aim", driveTrainSubsystem.aimCommand());
     NamedCommands.registerCommand("Intake", fuelSubSystem.intakeSpeedCommand(fuelSubSystem, () -> 0.8, () -> 0.0).withTimeout(5));
     NamedCommands.registerCommand("Stop Launcher", fuelSubSystem.stopLauncherCommand(fuelSubSystem));
+    NamedCommands.registerCommand("Stop Intake", fuelSubSystem.setIntakeCommand(fuelSubSystem,0));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
