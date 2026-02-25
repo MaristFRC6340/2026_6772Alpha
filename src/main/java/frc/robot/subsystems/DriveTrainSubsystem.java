@@ -146,11 +146,11 @@ public DriveTrainSubsystem() {
       m_gyro.getRotation2d(),
       -m_leftEncoder.getPosition()  * 2 * Math.PI * WHEEL_RADIUS / (GEAR_RATIO*gearMultiply),
       -m_rightEncoder.getPosition()  * 2 * Math.PI * WHEEL_RADIUS / (GEAR_RATIO*gearMultiply),
-      // new Pose2d(3.5, 4, new Rotation2d(0)));
+
+      new Pose2d(3.5, 4, new Rotation2d(0)));
       //center
 
-
-      new Pose2d(3.5, 5.31, new Rotation2d(0)));
+      //new Pose2d(3.5, 5.31, new Rotation2d(0)));
       //left
 
       //new Pose2d(3.5, 2.88, new Rotation2d(0)));
@@ -256,6 +256,7 @@ public DriveTrainSubsystem() {
     public Pose2d getPose() {
     return m_PoseEstimator.getEstimatedPosition();
   }
+
 
   public void resetPose(Pose2d pos) {
 
