@@ -185,7 +185,7 @@ public void setDesiredAngle() {
     PathPlannerAuto auto = (PathPlannerAuto) autoCommand;
 
     Pose2d startPose = auto.getStartingPose();
-    driveTrainSubsystem.resetPose(startPose);
+    driveTrainSubsystem.setStartPose(startPose);
 
     return autoChooser.getSelected();
     //return null;

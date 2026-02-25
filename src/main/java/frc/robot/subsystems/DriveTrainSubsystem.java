@@ -259,7 +259,7 @@ public DriveTrainSubsystem() {
 
 
   public void resetPose(Pose2d pos) {
-
+    
     double angle = pos.getRotation().getDegrees();
     double x = pos.getX();
     double y = pos.getY();
@@ -268,6 +268,12 @@ public DriveTrainSubsystem() {
     m_PoseEstimator.update(
     new Rotation2d(angle), x,y);
     }
+
+  // For Path Planner and AdvantageScope
+  // Now it Works!
+  public void setStartPose(Pose2d startPose) {
+    m_PoseEstimator.resetTranslation(new Translation2d(startPose.getX(), startPose.getY()));
+  }
 
   public ChassisSpeeds getSpeeds() {
  

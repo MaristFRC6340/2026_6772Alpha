@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Center Start"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -29,13 +23,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Start Launcher Center"
+                  "name": "Intake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Start Launcher"
                 }
               }
             ]
