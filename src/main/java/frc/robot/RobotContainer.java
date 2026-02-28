@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
@@ -65,15 +66,22 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     
+    // Start Position Commands - Not Used anymore
     NamedCommands.registerCommand("Center Start", driveTrainSubsystem.setCenterPose());
     NamedCommands.registerCommand("Left Start", driveTrainSubsystem.setLeftPose());
     NamedCommands.registerCommand("Right Start", driveTrainSubsystem.setRightPose());
 
+    // Climber Position Commands
+    NamedCommands.registerCommand("Climber Rest Position", climberSubSystem.setClimberPositionCommand(climberSubSystem, ClimberConstants.REST_POSITION));
+    NamedCommands.registerCommand("Climber Shoot Position", climberSubSystem.setClimberPositionCommand(climberSubSystem, ClimberConstants.SHOOTING_POSITION));
+
+    // Launcher Commands
     NamedCommands.registerCommand("Start Launcher", fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Far", fuelSubSystem.launchVelocityCommand(fuelSubSystem, FAR_DISTANCE_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Near", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Center", fuelSubSystem.launchVelocityCommand(fuelSubSystem, CENTER_DISTANCE_VELOCITY));
     
+    // Feeder and Intake Commands
     NamedCommands.registerCommand("Feeder Start", fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
     NamedCommands.registerCommand("Stop Feeder", fuelSubSystem.setFeederCommand(fuelSubSystem, 0));
     NamedCommands.registerCommand("Auto Aim", driveTrainSubsystem.aimCommand());
@@ -149,7 +157,19 @@ public void setDesiredAngle() {
    operatorController.y()
       .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, -0.8));
 
+    // Driver Controls
     // Climber Controls
+
+    // Climber to Up Position
+    // Rest is Position 0 (Straight Up and Down)
+    m_driverController.y()
+      .whileTrue(climberSubSystem.setClimberPositionCommand(climberSubSystem, ClimberConstants.REST_POSITION));
+
+    // Climber to Shooting Position - Try 250 for now
+    m_driverController.a()
+      .whileTrue(climberSubSystem.setClimberPositionCommand(climberSubSystem, ClimberConstants.SHOOTING_POSITION));
+
+    // Climber Manual Control
     m_driverController.leftTrigger(0.5)
       .whileTrue(climberSubSystem.setClimberCommand(climberSubSystem, 0.8));
 

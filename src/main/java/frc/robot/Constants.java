@@ -57,8 +57,13 @@ public final class Constants {
 
     public static final double NEAR_DISTANCE_VELOCITY  = 650;
     public static final double CENTER_DISTANCE_VELOCITY  = 625;
-    public static final double MID_DISTANCE_VELOCITY = 700;
+    public static final double MID_DISTANCE_VELOCITY = 750;
     public static final double FAR_DISTANCE_VELOCITY = 800;
+  }
+
+  public static class ClimberConstants {
+    public static final int REST_POSITION = 0;
+    public static final int SHOOTING_POSITION = 250;
   }
 
   public static class OperatorConstants {

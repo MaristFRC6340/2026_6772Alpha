@@ -10,6 +10,10 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,16 +27,31 @@ public class ClimberSubSystem extends SubsystemBase {
   private SparkMax climberMotor;
   private RelativeEncoder climberEncoder;
 
+  private SparkClosedLoopController climberClosedLoopController;
+  private SparkMaxConfig climberConfig;
+
 
   /** Creates a new ClimberSubSystem. */
   public ClimberSubSystem() {
     climberMotor = new SparkMax(Constants.FuelConstants.CLIMBER_ID, MotorType.kBrushless);
     climberEncoder = climberMotor.getEncoder();
+    climberClosedLoopController = climberMotor.getClosedLoopController();
+
+    climberConfig = new SparkMaxConfig();
+    climberConfig.encoder
+      .positionConversionFactor(1)
+      .velocityConversionFactor(1);
+
+    climberConfig.closedLoop
+      .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .p(0.1)
+      .i(0)
+      .d(0)
+      .outputRange(-.95, .95);
 
     // Reset to Zero
     climberEncoder.setPosition(0);
 
-    SparkMaxConfig climberConfig = new SparkMaxConfig();
     climberConfig.smartCurrentLimit(Constants.FuelConstants.CURRENT_LIMIT);
     climberConfig.idleMode(IdleMode.kBrake);
     climberMotor.configure(climberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -56,6 +75,10 @@ public class ClimberSubSystem extends SubsystemBase {
 
   public Command setClimberCommand(ClimberSubSystem climberSubSystem, double speed) {
     return Commands.runEnd(() -> setClimberPower(speed), () -> setClimberPower(0));
+  }
+
+  public Command setClimberPositionCommand(ClimberSubSystem climberSubSystem, double position) {
+    return Commands.run(() -> climberClosedLoopController.setSetpoint(position, ControlType.kPosition, ClosedLoopSlot.kSlot0));
   }
 
 
