@@ -59,6 +59,8 @@ public final class Constants {
     public static final double CENTER_DISTANCE_VELOCITY  = 625;
     public static final double MID_DISTANCE_VELOCITY = 750;
     public static final double FAR_DISTANCE_VELOCITY = 800;
+
+    public static final double TEST_VELOCITY = 500;
   }
 
   public static class ClimberConstants {

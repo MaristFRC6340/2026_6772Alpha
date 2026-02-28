@@ -69,6 +69,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   private NetworkTable limTable;
   private NetworkTableEntry tx; //yw ofc :)
+  private NetworkTableEntry ta;
 
   // Defining the Pose Estimator
   private final DifferentialDrivePoseEstimator m_PoseEstimator;
@@ -171,6 +172,7 @@ public DriveTrainSubsystem() {
       // binding limelight
       limTable = NetworkTableInstance.getDefault().getTable("limelight");
       tx = limTable.getEntry("tx");
+      ta = limTable.getEntry("ta");
 
       // Turning off all Path Planner for Now
        

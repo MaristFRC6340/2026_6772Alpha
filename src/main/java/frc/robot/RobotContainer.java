@@ -15,6 +15,7 @@ import static frc.robot.Constants.FuelConstants.FAR_DISTANCE_VELOCITY;
 import static frc.robot.Constants.FuelConstants.FEEDER_LAUNCH_POWER;
 import static frc.robot.Constants.FuelConstants.MID_DISTANCE_VELOCITY;
 import static frc.robot.Constants.FuelConstants.NEAR_DISTANCE_VELOCITY;
+import static frc.robot.Constants.FuelConstants.TEST_VELOCITY;
 
 import org.opencv.features2d.Features2d;
 
@@ -49,6 +50,7 @@ public class RobotContainer {
   private final DriveTrainSubsystem driveTrainSubsystem= new DriveTrainSubsystem();
   private final FuelSubSystem fuelSubSystem = new FuelSubSystem();
   private final ClimberSubSystem climberSubSystem = new ClimberSubSystem();
+  private double rpmOffset = 10;
 
   // Chooser
   private final SendableChooser<Command> autoChooser;
@@ -133,8 +135,6 @@ public void setDesiredAngle() {
 
     // Climber controlled with Triggers
 
-    
-
 
     // Stop Launcher Motors
     operatorController.a()
@@ -143,11 +143,16 @@ public void setDesiredAngle() {
     // Start Launcher Motors
     operatorController.x()
       .whileTrue(fuelSubSystem.launchVelocityCommand(fuelSubSystem, MID_DISTANCE_VELOCITY)); 
+      //.whileTrue(fuelSubSystem.launchVelocityTestcommand(fuelSubSystem));
       // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
 
     // Shoots Fuel
     operatorController.rightBumper()
       .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
+
+    // limelight distance shoot Trigger
+    operatorController.leftBumper()
+    .whileTrue(fuelSubSystem.launchVelocityLimelightCommand(fuelSubSystem));  
 
     // Intakes Fuel  
     operatorController.b()
@@ -156,6 +161,13 @@ public void setDesiredAngle() {
    // Outake Fuel
    operatorController.y()
       .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, -0.8));
+
+   operatorController.povUp()
+      .onTrue(fuelSubSystem.changeTargetVelocityCommand(10));
+
+   
+   operatorController.povDown()
+      .onTrue(fuelSubSystem.changeTargetVelocityCommand(-10));
 
     // Driver Controls
     // Climber Controls

@@ -21,6 +21,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +47,13 @@ public class FuelSubSystem extends SubsystemBase {
 
   private final RelativeEncoder m_leftLaunchEncoder;
   private final RelativeEncoder m_rightLaunchEncoder;
+
+  // Variable for Shooter Velocity Control
+  private double launcherVelocitySet = 0;
+
+  private NetworkTable limTable;
+  private NetworkTableEntry tx; //yw ofc :)
+  private NetworkTableEntry ta;
 
   /** Creates a new FuelSubSystem. */
   public FuelSubSystem() {
@@ -106,6 +116,12 @@ public class FuelSubSystem extends SubsystemBase {
       SmartDashboard.putNumber("Right Launcher RPM:", 0);
       SmartDashboard.putNumber("Left Launch Amps", 0);
       SmartDashboard.putNumber("Right Launch Amps", 0);
+      SmartDashboard.putNumber("Shoot Velocity Set", 0);
+
+      // binding limelight
+      limTable = NetworkTableInstance.getDefault().getTable("limelight");
+      tx = limTable.getEntry("tx");
+      ta = limTable.getEntry("ta");
       
   }
 
@@ -121,6 +137,7 @@ public class FuelSubSystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Left Launch Amps", leftAmps);
     SmartDashboard.putNumber("Right Launch Amps", rightAmps);
+    
 
   }
 
@@ -137,6 +154,24 @@ public class FuelSubSystem extends SubsystemBase {
     leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
+
+  public void setLaunchVelocityFromSetPoint() {
+    double velocity = SmartDashboard.getNumber("Shoot Velocity Set", 0);
+    leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+  }
+
+    public void setLaunchVelocityFromLimelight() {
+    double tagArea = ta.getDouble(0.75);
+    double velocity = -672.98*Math.pow(tagArea, 3)+ 1948.8*Math.pow(tagArea, 2)-1872.5*tagArea+1246.2;
+    leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    launcherVelocitySet =  velocity;
+    SmartDashboard.putNumber("Shoot Velocity Set", launcherVelocitySet);
+    
+  }
+
+
 
   // Stop Launcher
   public void stopLauncher() {
@@ -184,6 +219,14 @@ public class FuelSubSystem extends SubsystemBase {
     feederRoller.set(power);
   }
 
+  public void changeTargetVelocity(double delta) {
+    launcherVelocitySet += delta;
+    if (launcherVelocitySet < 0) {
+      launcherVelocitySet = 0;
+    }
+    SmartDashboard.putNumber("Shoot Velocity Set", launcherVelocitySet);
+  }
+
 
   // Command Factories
 
@@ -200,6 +243,16 @@ public class FuelSubSystem extends SubsystemBase {
   // Use this oune
   public Command launchVelocityCommand(FuelSubSystem fuelSubSystem, double velocity) {
     return Commands.run(() -> setLaunchVelocity(velocity));
+  }
+
+  // Temporary Command for testing velocity
+  public Command launchVelocityTestcommand(FuelSubSystem fuelSubSystem) {
+    return Commands.run(() -> setLaunchVelocityFromSetPoint());
+  }
+
+  // Distance Test Command
+  public Command launchVelocityLimelightCommand(FuelSubSystem fuelSubSystem) {
+    return Commands.run(() -> setLaunchVelocityFromLimelight());
   }
 
   public Command stopLauncherCommand(FuelSubSystem fuelSubSystem) {
@@ -225,6 +278,10 @@ public class FuelSubSystem extends SubsystemBase {
 
   public Command setIntakeCommand(FuelSubSystem fuelSubSystem, double speed) {
     return Commands.runEnd(() -> setIntakeFeederPower(speed), () -> setIntakeFeederPower(0));
+  }
+
+  public Command changeTargetVelocityCommand(double delta) {
+    return Commands.runOnce(() -> changeTargetVelocity(delta));
   }
 
 }
