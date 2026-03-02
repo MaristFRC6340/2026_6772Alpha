@@ -146,7 +146,7 @@ public void setDesiredAngle() {
       //.whileTrue(fuelSubSystem.launchVelocityTestcommand(fuelSubSystem));
       // Not really RPM yet about 8:1 Ratio 550 -> 4400 RPM
 
-    // Shoots Fuel
+    // Shoots Fuel 
     operatorController.rightBumper()
       .whileTrue(fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
 
