@@ -29,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Start Launcher"
+                  "name": "Start Launcher Center Auto"
                 }
               }
             ]
@@ -49,12 +49,6 @@
                 "type": "named",
                 "data": {
                   "name": "Stop Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Auto Aim"
                 }
               }
             ]

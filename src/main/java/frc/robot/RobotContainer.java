@@ -82,7 +82,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("Start Launcher Far", fuelSubSystem.launchVelocityCommand(fuelSubSystem, FAR_DISTANCE_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Near", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Center", fuelSubSystem.launchVelocityCommand(fuelSubSystem, CENTER_DISTANCE_VELOCITY));
+
+    //offseted shooting for auto
+    NamedCommands.registerCommand("Start Launcher Left Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY+Constants.FuelConstants.LEFT_AUTO_SHOOTER_OFFSET));
+    NamedCommands.registerCommand("Start Launcher Center Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, CENTER_DISTANCE_VELOCITY+Constants.FuelConstants.CENTER_AUTO_SHOOTER_OFFSET));
+    NamedCommands.registerCommand("Start Launcher Right Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY+Constants.FuelConstants.RIGHT_AUTO_SHOOTER_OFFSET));
     
+    // LimeLight distance Velocity for Auto
+    NamedCommands.registerCommand("Start Launcher Limelight Auto", fuelSubSystem.launchVelocityLimelightCommand(fuelSubSystem));
+
     // Feeder and Intake Commands
     NamedCommands.registerCommand("Feeder Start", fuelSubSystem.setFeederCommand(fuelSubSystem, -0.8));
     NamedCommands.registerCommand("Stop Feeder", fuelSubSystem.setFeederCommand(fuelSubSystem, 0));
