@@ -164,6 +164,7 @@ public class FuelSubSystem extends SubsystemBase {
     public void setLaunchVelocityFromLimelight() {
     double tagArea = ta.getDouble(0.75);
     double velocity = -672.98*Math.pow(tagArea, 3)+ 1948.8*Math.pow(tagArea, 2)-1872.5*tagArea+1246.2;
+    velocity = velocity*0.9;
     leftLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     rightLaunchClosedLoopController.setSetpoint(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     launcherVelocitySet =  velocity;
