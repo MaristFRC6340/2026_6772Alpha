@@ -61,7 +61,7 @@ public final class Constants {
     public static final double FAR_DISTANCE_VELOCITY = 800;
 
     public static final double LEFT_AUTO_SHOOTER_OFFSET = 37.67;
-    public static final double RIGHT_AUTO_SHOOTER_OFFSET = 60;
+    public static final double RIGHT_AUTO_SHOOTER_OFFSET = 50;
     public static final double CENTER_AUTO_SHOOTER_OFFSET = -27.5;
 
     public static final double TEST_VELOCITY = 500;
@@ -85,7 +85,7 @@ public final class Constants {
 
     // Slow and Fast Mode Constants
     public static final double SLOW_DRIVE = 0.5;
-    public static final double SLOW_TURN = 0.3;
+    public static final double SLOW_TURN = 0.4;
     public static final double FAST_DRIVE = 0.8;
     public static final double FAST_TURN = 0.5;
   }
