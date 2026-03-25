@@ -40,6 +40,7 @@ public class FuelSubSystem extends SubsystemBase {
   private SparkMax launcherLeft;
   private SparkMax launcherRight;
   private SparkFlex intakeMotor;
+  private SparkFlex indexMotor;
 
   // Closed Loop Controllers for Launcher
   private SparkClosedLoopController leftLaunchClosedLoopController;
@@ -63,6 +64,7 @@ public class FuelSubSystem extends SubsystemBase {
       launcherLeft = new SparkMax(Constants.FuelConstants.FUEL_SHOOTER_LEFT_ID, MotorType.kBrushless);
       launcherRight = new SparkMax(Constants.FuelConstants.FUEL_SHOOTER_RIGHT_ID, MotorType.kBrushless);
       intakeMotor = new SparkFlex(Constants.FuelConstants.FUEL_INTAKE_ID, MotorType.kBrushless);
+      indexMotor = new SparkFlex(Constants.FuelConstants.FUEL_INDEXER_ID, MotorType.kBrushless);
 
       // Initialize Closed Loop Controllers
       leftLaunchClosedLoopController = launcherLeft.getClosedLoopController();
@@ -74,6 +76,7 @@ public class FuelSubSystem extends SubsystemBase {
       feederConfig.idleMode(IdleMode.kBrake);
       feederRoller.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       intakeMotor.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      indexMotor.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       // Setup Configuration for Launcher Motors and PID
       SparkMaxConfig launcherConfig = new SparkMaxConfig();
@@ -208,11 +211,13 @@ public class FuelSubSystem extends SubsystemBase {
   public void setIntakeFeederPower(double power) {
     intakeMotor.set(power);
     feederRoller.set(power);
+    indexMotor.set(power);
   }
 
   public void setFeederLaunchPower(double power) {
     intakeMotor.set(-power);
     feederRoller.set(power);
+    indexMotor.set(power); 
   }
 
   

@@ -42,6 +42,7 @@ public final class Constants {
     public static final int FUEL_FEEDER_ID = 20;
     public static final int FUEL_SHOOTER_LEFT_ID = 21;
     public static final int FUEL_SHOOTER_RIGHT_ID = 22;
+    public static final int FUEL_INDEXER_ID = 24; // Floor of the Hopper
 
     public static final int CLIMBER_ID = 30;
 
@@ -58,18 +59,18 @@ public final class Constants {
     public static final double NEAR_DISTANCE_VELOCITY  = 650;
     public static final double CENTER_DISTANCE_VELOCITY  = 700;
     public static final double MID_DISTANCE_VELOCITY = 750;
-    public static final double FAR_DISTANCE_VELOCITY = 800;
+    public static final double FAR_DISTANCE_VELOCITY = 950;
 
     public static final double LEFT_AUTO_SHOOTER_OFFSET = 37.67;
     public static final double RIGHT_AUTO_SHOOTER_OFFSET = 50;
-    public static final double CENTER_AUTO_SHOOTER_OFFSET = -27.5;
+    public static final double CENTER_AUTO_SHOOTER_OFFSET = 25;
 
     public static final double TEST_VELOCITY = 500;
   }
 
   public static class ClimberConstants {
     public static final int REST_POSITION = 0;
-    public static final int SHOOTING_POSITION = 250;
+    public static final int SHOOTING_POSITION = 250;  //climber down
   }
 
   public static class OperatorConstants {
@@ -86,7 +87,7 @@ public final class Constants {
     // Slow and Fast Mode Constants
     public static final double SLOW_DRIVE = 0.5;
     public static final double SLOW_TURN = 0.4;
-    public static final double FAST_DRIVE = 0.8;
+    public static final double FAST_DRIVE = 0.9;
     public static final double FAST_TURN = 0.5;
   }
 }
