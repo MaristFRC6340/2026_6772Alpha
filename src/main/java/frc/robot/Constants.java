@@ -59,11 +59,11 @@ public final class Constants {
     public static final double NEAR_DISTANCE_VELOCITY  = 650;
     public static final double CENTER_DISTANCE_VELOCITY  = 700;
     public static final double MID_DISTANCE_VELOCITY = 750;
-    public static final double FAR_DISTANCE_VELOCITY = 950;
+    public static final double FAR_DISTANCE_VELOCITY = 800;
 
-    public static final double LEFT_AUTO_SHOOTER_OFFSET = 37.67;
+    public static final double LEFT_AUTO_SHOOTER_OFFSET = 50;
     public static final double RIGHT_AUTO_SHOOTER_OFFSET = 50;
-    public static final double CENTER_AUTO_SHOOTER_OFFSET = 25;
+    public static final double CENTER_AUTO_SHOOTER_OFFSET = -10;
 
     public static final double TEST_VELOCITY = 500;
   }
