@@ -42,7 +42,7 @@ public final class Constants {
     public static final int FUEL_FEEDER_ID = 20;
     public static final int FUEL_SHOOTER_LEFT_ID = 21;
     public static final int FUEL_SHOOTER_RIGHT_ID = 22;
-    public static final int FUEL_INDEXER_ID = 24; // Floor of the Hopper
+    public static final int FUEL_HOPPER_ID = 24; // extendo of the Hopper
 
     public static final int CLIMBER_ID = 30;
 

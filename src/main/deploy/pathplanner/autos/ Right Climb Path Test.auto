@@ -19,12 +19,6 @@
                 "data": {
                   "name": "Climber Shoot Position"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Start Launcher Right Auto"
-                }
               }
             ]
           }
