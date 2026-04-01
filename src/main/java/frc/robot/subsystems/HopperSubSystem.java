@@ -15,12 +15,15 @@ public class HopperSubSystem extends SubsystemBase {
   // Fields
   private SparkFlex hopperMotor;
 
+  // Add fields for encoder, configuration, and closed Loop Controller
+  // See the ClimberSubSystem for examples
+
   /** Creates a new HopperSubSystem. */
   public HopperSubSystem() {
     // Intialize and Configure
     hopperMotor = new SparkFlex(Constants.FuelConstants.FUEL_HOPPER_ID, MotorType.kBrushless);
 
-    // Set Configuration - See Example in FuelSubSystem
+    // Set Configuration - See Examples from ClimberSubSystem
 
   }
 
