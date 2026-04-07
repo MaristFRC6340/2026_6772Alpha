@@ -31,6 +31,12 @@
                 "data": {
                   "name": "Start Launcher Left Auto"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract Hopper"
+                }
               }
             ]
           }

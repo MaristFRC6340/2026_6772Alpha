@@ -9,6 +9,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.ClimberSubSystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.FuelSubSystem;
+import frc.robot.subsystems.HopperSubSystem;
 
 import static frc.robot.Constants.FuelConstants.CENTER_DISTANCE_VELOCITY;
 import static frc.robot.Constants.FuelConstants.FAR_DISTANCE_VELOCITY;
@@ -50,6 +51,7 @@ public class RobotContainer {
   private final DriveTrainSubsystem driveTrainSubsystem= new DriveTrainSubsystem();
   private final FuelSubSystem fuelSubSystem = new FuelSubSystem();
   private final ClimberSubSystem climberSubSystem = new ClimberSubSystem();
+  private final HopperSubSystem hopperSubSystem = new HopperSubSystem();
   private double rpmOffset = 10;
 
   // Chooser
@@ -72,6 +74,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Center Start", driveTrainSubsystem.setCenterPose());
     NamedCommands.registerCommand("Left Start", driveTrainSubsystem.setLeftPose());
     NamedCommands.registerCommand("Right Start", driveTrainSubsystem.setRightPose());
+    NamedCommands.registerCommand("Retract Hopper", hopperSubSystem.setHopperPositionCommand(hopperSubSystem, 0));
 
     // Climber Position Commands
     NamedCommands.registerCommand("Climber Rest Position", climberSubSystem.setClimberPositionCommand(climberSubSystem, ClimberConstants.REST_POSITION));
@@ -87,7 +90,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Start Launcher Left Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY+Constants.FuelConstants.LEFT_AUTO_SHOOTER_OFFSET));
     NamedCommands.registerCommand("Start Launcher Center Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, CENTER_DISTANCE_VELOCITY+Constants.FuelConstants.CENTER_AUTO_SHOOTER_OFFSET));
     NamedCommands.registerCommand("Start Launcher Right Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY+Constants.FuelConstants.RIGHT_AUTO_SHOOTER_OFFSET));
-    
+    NamedCommands.registerCommand("Start Launcher Center Climb Auto", fuelSubSystem.launchVelocityCommand(fuelSubSystem, NEAR_DISTANCE_VELOCITY+Constants.FuelConstants.CENTER_AUTO_CLIMB_SHOOTER_OFFSET));
+
     // LimeLight distance Velocity for Auto
     NamedCommands.registerCommand("Start Launcher Limelight Auto", fuelSubSystem.launchVelocityLimelightCommand(fuelSubSystem));
 
@@ -170,12 +174,26 @@ public void setDesiredAngle() {
    operatorController.y()
       .whileTrue(fuelSubSystem.setIntakeCommand(fuelSubSystem, -0.8));
 
-   operatorController.povUp()
-      .onTrue(fuelSubSystem.changeTargetVelocityCommand(10));
+   //operatorController.povUp()
+      //.onTrue(fuelSubSystem.changeTargetVelocityCommand(10));
 
    
-   operatorController.povDown()
-      .onTrue(fuelSubSystem.changeTargetVelocityCommand(-10));
+   //operatorController.povDown()
+      //.onTrue(fuelSubSystem.changeTargetVelocityCommand(-10));
+
+  // Hopper
+  // Manual Control
+  operatorController.rightTrigger(0.5)
+    .whileTrue(hopperSubSystem.setHopperCommand(hopperSubSystem, 0.08));
+
+  operatorController.leftTrigger(0.5)
+    .whileTrue(hopperSubSystem.setHopperCommand(hopperSubSystem, -0.08));
+
+  operatorController.povUp()
+    .whileTrue(hopperSubSystem.setHopperPositionCommand(hopperSubSystem, 0));
+
+  operatorController.povDown()
+    .whileTrue(hopperSubSystem.setHopperPositionCommand(hopperSubSystem, -3));
 
     // Driver Controls
     // Climber Controls
